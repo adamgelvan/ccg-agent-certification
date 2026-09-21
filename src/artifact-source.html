@@ -1,0 +1,886 @@
+<title>Certification Runway</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bitter:wght@600;700&family=Public+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&family=IBM+Plex+Mono:wght@500;600&display=swap">
+<style>
+:root{
+  --ground:#f4f6f8; --surface:#ffffff; --surface-2:#eaeef3; --surface-3:#f9fafc;
+  --ink:#111820; --ink-2:#4a5561; --ink-3:#717f8c;
+  --line:#dce2ea; --line-2:#c4cede;
+  --ffm:#15538c; --ffm-ink:#15538c; --ffm-soft:#e8eff7;
+  --ga:#0c8074; --ga-ink:#0a6c62; --ga-soft:#e1f2ef;
+  --ok:#15764a; --ok-soft:#e3f3ea;
+  --warn:#8f5c06; --warn-soft:#fdf2df; --warn-line:#e8c98b;
+  --focus:#2b7de0; --btn:#15538c; --btn-ink:#ffffff; --bad:#b3261e;
+  --shadow:0 1px 2px rgba(17,24,32,.06), 0 6px 18px -10px rgba(17,24,32,.28);
+  --mono:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
+  --body:"Public Sans",-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;
+  --display:"Bitter",Georgia,"Times New Roman",serif;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --ground:#0d1218; --surface:#151d25; --surface-2:#1e2833; --surface-3:#111921;
+    --ink:#e9eef3; --ink-2:#a8b5c1; --ink-3:#7c8a97;
+    --line:#27313c; --line-2:#3a4855;
+    --ffm:#7fb6e8; --ffm-ink:#9cc8f2; --ffm-soft:#15293c;
+    --ga:#4fd0bf; --ga-ink:#6fdccd; --ga-soft:#0d2b28;
+    --ok:#5fc791; --ok-soft:#10281c;
+    --warn:#e0ae60; --warn-soft:#2c2110; --warn-line:#5c4620;
+    --btn:#3d8fd4; --btn-ink:#0a1119; --bad:#f2a49c;
+    --shadow:0 1px 2px rgba(0,0,0,.4), 0 8px 22px -12px rgba(0,0,0,.7);
+  }
+}
+:root[data-theme="dark"]{
+  --ground:#0d1218; --surface:#151d25; --surface-2:#1e2833; --surface-3:#111921;
+  --ink:#e9eef3; --ink-2:#a8b5c1; --ink-3:#7c8a97;
+  --line:#27313c; --line-2:#3a4855;
+  --ffm:#7fb6e8; --ffm-ink:#9cc8f2; --ffm-soft:#15293c;
+  --ga:#4fd0bf; --ga-ink:#6fdccd; --ga-soft:#0d2b28;
+  --ok:#5fc791; --ok-soft:#10281c;
+  --warn:#e0ae60; --warn-soft:#2c2110; --warn-line:#5c4620;
+  --btn:#3d8fd4; --btn-ink:#0a1119; --bad:#f2a49c;
+  --shadow:0 1px 2px rgba(0,0,0,.4), 0 8px 22px -12px rgba(0,0,0,.7);
+}
+
+*{box-sizing:border-box}
+body{
+  margin:0; background:var(--ground); color:var(--ink);
+  font-family:var(--body); font-size:16px; line-height:1.55;
+  -webkit-font-smoothing:antialiased;
+}
+h1,h2,h3{font-family:var(--display); font-weight:700; text-wrap:balance; margin:0; line-height:1.2}
+p{margin:0}
+a{color:var(--ffm-ink)}
+:focus-visible{outline:2.5px solid var(--focus); outline-offset:2px; border-radius:3px}
+
+.wrap{max-width:900px; margin:0 auto; padding-inline:20px}
+
+/* ---------- sticky progress bar ---------- */
+.bar{
+  position:sticky; top:env(safe-area-inset-top, 0px); z-index:40;
+  background:color-mix(in srgb, var(--surface) 88%, transparent);
+  backdrop-filter:saturate(1.4) blur(10px);
+  border-bottom:1px solid var(--line);
+}
+.bar-in{display:flex; align-items:center; gap:18px; padding-block:10px; flex-wrap:wrap}
+.brandmark{
+  font-family:var(--mono); font-size:11px; font-weight:600; letter-spacing:.12em;
+  text-transform:uppercase; color:var(--ink-3); margin-right:auto; white-space:nowrap;
+}
+.meters{display:flex; gap:14px; flex-wrap:wrap}
+.meter{
+  display:flex; align-items:center; gap:8px; background:var(--surface-2);
+  border:1px solid var(--line); border-radius:999px; padding:5px 12px 5px 8px;
+  font-size:12.5px; font-weight:600; color:var(--ink-2); cursor:pointer;
+  font-family:inherit; text-decoration:none;
+}
+.meter:hover{border-color:var(--line-2)}
+.dial{width:20px; height:20px; flex:none; transform:rotate(-90deg)}
+.dial circle{fill:none; stroke-width:4}
+.dial .bg{stroke:var(--line-2)}
+.dial .fg{stroke:var(--track); transition:stroke-dashoffset .45s ease}
+.meter b{font-family:var(--mono); font-weight:600; color:var(--ink); font-variant-numeric:tabular-nums}
+.meter.t-ffm{--track:var(--ffm)} .meter.t-ga{--track:var(--ga)}
+.meter.full{background:var(--ok-soft); border-color:color-mix(in srgb, var(--ok) 40%, transparent)}
+.meter.full b{color:var(--ok)}
+
+/* ---------- hero ---------- */
+.hero{padding-block:44px 10px}
+.eyebrow{
+  font-family:var(--mono); font-size:11.5px; font-weight:600; letter-spacing:.14em;
+  text-transform:uppercase; color:var(--ink-3);
+}
+.hero h1{font-size:clamp(30px,6.2vw,46px); margin-top:14px; letter-spacing:-.015em}
+.lede{font-size:17.5px; color:var(--ink-2); max-width:58ch; margin-top:16px}
+.lede strong{color:var(--ink); font-weight:600}
+
+.facts{
+  display:grid; grid-template-columns:repeat(auto-fit,minmax(168px,1fr));
+  gap:1px; background:var(--line); border:1px solid var(--line);
+  border-radius:10px; overflow:hidden; margin-top:28px;
+}
+.fact{background:var(--surface); padding:14px 16px}
+.fact dt{
+  font-family:var(--mono); font-size:10.5px; font-weight:600; letter-spacing:.1em;
+  text-transform:uppercase; color:var(--ink-3);
+}
+.fact dd{margin:5px 0 0; font-size:15px; font-weight:600; color:var(--ink)}
+.fact dd span{display:block; font-weight:400; font-size:13px; color:var(--ink-3); margin-top:2px}
+
+/* ---------- prep block ---------- */
+.prep{
+  margin-top:30px; border:1px solid var(--line); border-radius:12px;
+  background:var(--surface); box-shadow:var(--shadow); overflow:hidden;
+}
+.prep-head{
+  padding:16px 20px; border-bottom:1px solid var(--line); background:var(--surface-3);
+  display:flex; align-items:baseline; gap:10px; flex-wrap:wrap;
+}
+.prep-head h2{font-size:17px}
+.prep-head p{font-size:13.5px; color:var(--ink-3)}
+.prep ul{list-style:none; margin:0; padding:14px 20px 18px; display:grid; gap:10px}
+.prep li{display:flex; gap:10px; align-items:flex-start; font-size:14.5px; color:var(--ink-2)}
+.prep li::before{
+  content:""; width:6px; height:6px; margin-top:8px; flex:none;
+  border-radius:50%; background:var(--line-2);
+}
+.prep li b{color:var(--ink); font-weight:600}
+
+/* ---------- track sections ---------- */
+.track{padding-block:56px 8px; scroll-margin-top:72px}
+.track-head{display:flex; align-items:flex-start; gap:16px}
+.track-tag{
+  flex:none; font-family:var(--mono); font-size:11px; font-weight:600; letter-spacing:.1em;
+  text-transform:uppercase; padding:5px 10px; border-radius:6px; margin-top:4px;
+  background:var(--tsoft); color:var(--tcolor); border:1px solid color-mix(in srgb, var(--tcolor) 28%, transparent);
+}
+.track-head h2{font-size:clamp(24px,4.6vw,32px); letter-spacing:-.01em}
+.track-head p{color:var(--ink-2); font-size:15.5px; margin-top:8px; max-width:58ch}
+#ffm{--tcolor:var(--ffm-ink); --tsoft:var(--ffm-soft)}
+#georgia{--tcolor:var(--ga-ink); --tsoft:var(--ga-soft)}
+
+.steps{list-style:none; margin:30px 0 0; padding:0; position:relative}
+.steps::before{
+  content:""; position:absolute; left:17px; top:14px; bottom:26px; width:2px;
+  background:linear-gradient(var(--line-2), var(--line)); border-radius:2px;
+}
+.step{position:relative; padding-left:54px; padding-bottom:26px}
+.num{
+  position:absolute; left:0; top:4px; width:36px; height:36px; border-radius:50%;
+  display:grid; place-items:center; background:var(--surface); color:var(--tcolor);
+  border:2px solid var(--line-2); font-family:var(--mono); font-size:14px; font-weight:600;
+  transition:background .2s ease, border-color .2s ease, color .2s ease;
+}
+.step.done .num{background:var(--ok); border-color:var(--ok); color:#fff}
+.step.done .num::after{content:"✓"; font-family:var(--body); font-size:18px; font-weight:700}
+.step.done .num span{display:none}
+
+.card{
+  background:var(--surface); border:1px solid var(--line); border-radius:12px;
+  box-shadow:var(--shadow); overflow:hidden; transition:opacity .2s ease;
+}
+.step.done .card{opacity:.72}
+.step.done .card:hover,.step.done .card:focus-within{opacity:1}
+.card-body{padding:18px 20px 20px}
+.card h3{font-size:18px; letter-spacing:-.005em}
+.where{
+  font-family:var(--mono); font-size:11.5px; font-weight:500; color:var(--ink-3);
+  margin-top:7px; word-break:break-word;
+}
+.where a{color:var(--tcolor); text-decoration-thickness:1px; text-underline-offset:2px}
+.card > .card-body > p.say{margin-top:12px; color:var(--ink-2); font-size:15px; max-width:60ch}
+
+ol.doit{margin:14px 0 0; padding-left:20px; display:grid; gap:7px; font-size:14.8px; color:var(--ink-2)}
+ol.doit li{padding-left:3px}
+ol.doit strong{color:var(--ink); font-weight:600}
+ol.doit::marker{color:var(--ink-3)}
+kbd{
+  font-family:var(--body); font-size:13.5px; font-weight:600; color:var(--ink);
+  background:var(--surface-2); border:1px solid var(--line-2); border-bottom-width:2px;
+  border-radius:5px; padding:1px 6px; white-space:nowrap;
+}
+
+/* ---------- screenshot ---------- */
+figure{margin:16px 0 0}
+.shot{
+  display:block; width:100%; padding:0; border:1px solid var(--line-2); border-radius:9px;
+  background:var(--surface-2); cursor:zoom-in; overflow:hidden; line-height:0;
+}
+.shot img{width:100%; max-width:100%; height:auto; display:block}
+.shot:hover{border-color:var(--tcolor)}
+figcaption{
+  font-size:12.5px; color:var(--ink-3); margin-top:8px; display:flex; gap:7px; align-items:baseline;
+}
+figcaption::before{content:"Screen"; font-family:var(--mono); font-size:10px; font-weight:600;
+  letter-spacing:.09em; text-transform:uppercase; color:var(--ink-3); flex:none}
+
+/* ---------- notes ---------- */
+.note{
+  display:flex; gap:11px; margin-top:16px; padding:12px 15px; border-radius:9px;
+  font-size:14px; line-height:1.5; background:var(--warn-soft);
+  border:1px solid var(--warn-line); color:var(--ink-2);
+}
+.note .tag{
+  font-family:var(--mono); font-size:10px; font-weight:600; letter-spacing:.09em;
+  text-transform:uppercase; color:var(--warn); flex:none; padding-top:3px;
+}
+.note strong{color:var(--ink); font-weight:600}
+.note.tip{background:var(--surface-3); border-color:var(--line); }
+.note.tip .tag{color:var(--tcolor, var(--ink-3))}
+
+/* ---------- done toggle ---------- */
+.mark{
+  display:flex; align-items:center; gap:10px; width:100%;
+  padding:11px 20px; border:0; border-top:1px solid var(--line);
+  background:var(--surface-3); color:var(--ink-2); cursor:pointer;
+  font-family:var(--body); font-size:13.5px; font-weight:600; text-align:left;
+}
+.mark:hover{background:var(--surface-2); color:var(--ink)}
+.box{
+  width:18px; height:18px; flex:none; border:2px solid var(--line-2);
+  border-radius:5px; display:grid; place-items:center; background:var(--surface);
+}
+.step.done .mark{background:var(--ok-soft); color:var(--ok); border-top-color:color-mix(in srgb, var(--ok) 26%, transparent)}
+.step.done .box{background:var(--ok); border-color:var(--ok)}
+.step.done .box::after{content:"✓"; color:#fff; font-size:13px; font-weight:700; line-height:1}
+.mark .lbl-done{display:none}
+.step.done .mark .lbl-todo{display:none}
+.step.done .mark .lbl-done{display:inline}
+
+/* ---------- finish / reference ---------- */
+.finish{
+  margin-top:20px; padding:22px 24px; border-radius:12px;
+  background:var(--surface); border:1px solid var(--line); box-shadow:var(--shadow);
+}
+.finish h3{font-size:18px}
+.finish p{color:var(--ink-2); font-size:15px; margin-top:10px; max-width:60ch}
+
+.ref{padding-block:56px; scroll-margin-top:72px}
+.ref > h2{font-size:clamp(23px,4.4vw,30px); letter-spacing:-.01em}
+.ref > p.sub{color:var(--ink-2); margin-top:10px; font-size:15.5px; max-width:58ch}
+
+.qa{margin-top:26px; display:grid; gap:1px; background:var(--line);
+  border:1px solid var(--line); border-radius:11px; overflow:hidden}
+details{background:var(--surface)}
+summary{
+  padding:15px 20px; cursor:pointer; font-weight:600; font-size:15px; color:var(--ink);
+  list-style:none; display:flex; justify-content:space-between; gap:14px; align-items:center;
+}
+summary::-webkit-details-marker{display:none}
+summary::after{content:"+"; font-family:var(--mono); font-size:19px; color:var(--ink-3); flex:none; line-height:1}
+details[open] summary::after{content:"–"}
+details[open] summary{color:var(--ffm-ink)}
+summary:hover{background:var(--surface-3)}
+details .ans{padding:0 20px 17px; font-size:14.8px; color:var(--ink-2); max-width:64ch}
+details .ans p + p{margin-top:10px}
+
+.desks{display:grid; grid-template-columns:repeat(auto-fit,minmax(255px,1fr)); gap:14px; margin-top:26px}
+.desk{
+  background:var(--surface); border:1px solid var(--line); border-radius:11px; padding:17px 19px;
+  border-top:3px solid var(--dcolor, var(--line-2));
+}
+.desk h4{
+  margin:0; font-family:var(--mono); font-size:11px; font-weight:600; letter-spacing:.09em;
+  text-transform:uppercase; color:var(--dcolor, var(--ink-3));
+}
+.desk .who{font-size:15.5px; font-weight:600; margin-top:8px; color:var(--ink)}
+.desk .for{font-size:13.5px; color:var(--ink-3); margin-top:5px}
+.desk .contact{font-family:var(--mono); font-size:13px; margin-top:11px; word-break:break-all}
+.desk .contact a{color:var(--ink-2)}
+
+footer{
+  border-top:1px solid var(--line); margin-top:20px; padding-block:26px 44px;
+  font-size:13px; color:var(--ink-3); display:flex; gap:16px; flex-wrap:wrap; align-items:center;
+}
+footer p{max-width:62ch}
+.reset{
+  margin-left:auto; background:none; border:1px solid var(--line-2); color:var(--ink-3);
+  font-family:var(--body); font-size:12.5px; font-weight:600; padding:6px 12px;
+  border-radius:7px; cursor:pointer; white-space:nowrap;
+}
+.reset:hover{border-color:var(--warn); color:var(--warn)}
+
+/* ---------- lightbox ---------- */
+#lb{
+  position:fixed; inset:0; z-index:90; background:rgba(8,12,16,.86);
+  display:grid; place-items:center; padding:24px; cursor:zoom-out;
+}
+#lb img{max-width:100%; max-height:88vh; border-radius:7px; box-shadow:0 20px 60px rgba(0,0,0,.5)}
+#lb .hint{
+  position:absolute; bottom:max(18px, env(safe-area-inset-bottom, 0px)); left:0; right:0; text-align:center;
+  color:#c8d2dc; font-size:12.5px; font-family:var(--mono);
+}
+
+@media (max-width:540px){
+  .step{padding-left:0}
+  .steps::before{display:none}
+  .num{position:static; margin-bottom:10px}
+  .card-body{padding:16px 16px 18px}
+  .mark{padding-inline:16px}
+  .hero{padding-block:32px 6px}
+}
+@media (prefers-reduced-motion: reduce){
+  *{transition-duration:.01ms !important; animation-duration:.01ms !important}
+}
+@media print{
+  .bar,.mark,.reset,#lb{display:none !important}
+  .card,.desk,.prep,.finish{box-shadow:none; break-inside:avoid}
+  details{break-inside:avoid}
+}
+
+/* ---------- access gate ---------- */
+#gate{
+  position:fixed; inset:0; z-index:100; background:var(--ground);
+  display:grid; place-items:center; overflow-y:auto;
+  padding:24px; padding-top:max(24px, env(safe-area-inset-top,0px));
+  padding-bottom:max(24px, env(safe-area-inset-bottom,0px));
+}
+.gate-card{
+  width:100%; max-width:420px; background:var(--surface); border:1px solid var(--line);
+  border-radius:14px; box-shadow:var(--shadow); padding:32px 30px 24px;
+}
+.gate-card h1{font-size:clamp(23px,5.4vw,27px); margin-top:12px; letter-spacing:-.01em}
+.gate-card > p.gate-say{color:var(--ink-2); font-size:15px; margin-top:12px}
+#gate-form{display:grid; gap:9px; margin-top:22px}
+#gate-form label{
+  font-family:var(--mono); font-size:10.5px; font-weight:600; letter-spacing:.1em;
+  text-transform:uppercase; color:var(--ink-3);
+}
+#code{
+  font-family:var(--mono); font-size:17px; letter-spacing:.16em; width:100%;
+  padding:12px 14px; border:1.5px solid var(--line-2); border-radius:9px;
+  background:var(--surface-3); color:var(--ink);
+}
+#code:focus{
+  border-color:var(--btn); outline:none;
+  box-shadow:0 0 0 3px color-mix(in srgb, var(--btn) 24%, transparent);
+}
+#gate-form button{
+  margin-top:5px; padding:12px 16px; border:0; border-radius:9px;
+  background:var(--btn); color:var(--btn-ink); cursor:pointer;
+  font-family:var(--body); font-size:15px; font-weight:600;
+}
+#gate-form button:hover{filter:brightness(1.07)}
+#gate-err{color:var(--bad); font-size:13.5px; font-weight:500; margin-top:1px}
+.gate-foot{
+  font-size:12.5px; color:var(--ink-3); margin-top:22px;
+  border-top:1px solid var(--line); padding-top:15px;
+}
+@keyframes shake{
+  10%,90%{transform:translateX(-2px)} 20%,80%{transform:translateX(3px)}
+  30%,50%,70%{transform:translateX(-5px)} 40%,60%{transform:translateX(5px)}
+}
+.gate-card.bad{animation:shake .4s}
+@media print{#gate{display:none !important}}
+</style>
+
+<div id="gate">
+  <div class="gate-card" id="gate-card">
+    <div class="eyebrow">Coverage Care Group</div>
+    <h1>PY2027 Agent Certification</h1>
+    <p class="gate-say">Enter the access code from the office to open the certification guide.</p>
+    <form id="gate-form" autocomplete="off">
+      <label for="code">Access code</label>
+      <input id="code" name="code" type="text" autocapitalize="characters" autocorrect="off" spellcheck="false" placeholder="XXXXXX">
+      <button type="submit">Open the guide</button>
+      <p id="gate-err" role="alert" hidden>That code doesn't match. It's six characters &mdash; check the message the office sent you.</p>
+    </form>
+    <p class="gate-foot">Don't have a code? Reply to the email or text that sent you this link and we'll send it over.</p>
+  </div>
+</div>
+
+<header class="bar" hidden>
+  <div class="wrap bar-in">
+    <div class="brandmark">PY2027 Agent Certification</div>
+    <nav class="meters">
+      <a class="meter t-ffm" href="#ffm">
+        <svg class="dial" viewBox="0 0 24 24" aria-hidden="true"><circle class="bg" cx="12" cy="12" r="9"></circle><circle class="fg" id="dial-ffm" cx="12" cy="12" r="9" stroke-dasharray="56.5" stroke-dashoffset="56.5" stroke-linecap="round"></circle></svg>
+        FFM <b id="cnt-ffm">0/8</b>
+      </a>
+      <a class="meter t-ga" href="#georgia">
+        <svg class="dial" viewBox="0 0 24 24" aria-hidden="true"><circle class="bg" cx="12" cy="12" r="9"></circle><circle class="fg" id="dial-ga" cx="12" cy="12" r="9" stroke-dasharray="56.5" stroke-dashoffset="56.5" stroke-linecap="round"></circle></svg>
+        Georgia <b id="cnt-ga">0/6</b>
+      </a>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap" hidden>
+
+  <section class="hero">
+    <div class="eyebrow">Plan Year 2027 · Coverage Care Group</div>
+    <h1>Get certified to write ACA business in 2027.</h1>
+    <p class="lede">Two separate certifications, two separate portals, no overlap between them. <strong>FFM registration</strong> through CMS lets you write on HealthCare.gov. <strong>Georgia Access certification</strong> lets you write in Georgia, which runs its own marketplace. Both need to be done by <strong>October 1</strong>, ahead of open enrollment. Work down each track and tick off steps as you go — this page remembers where you stopped.</p>
+
+    <dl class="facts">
+      <div class="fact"><dt>FFM track</dt><dd>8 steps<span>Plan 2–3 hrs returning</span></dd></div>
+      <div class="fact"><dt>Georgia track</dt><dd>6 steps<span>Plan 1–2 hrs</span></dd></div>
+      <div class="fact"><dt>Do them in</dt><dd>Any order<span>Independent systems</span></dd></div>
+      <div class="fact"><dt>Finish by</dt><dd>Oct 1, 2026<span>Agency deadline</span></dd></div>
+    </dl>
+
+    <div class="prep">
+      <div class="prep-head">
+        <h2>Before you open either portal</h2>
+        <p>Have these in front of you — both sites will time you out.</p>
+      </div>
+      <ul>
+        <li><b>Your NPN.</b> Your National Producer Number, exactly as it appears on nipr.com. Both portals key everything off it.</li>
+        <li><b>An active health insurance license</b> in every state you intend to write. Georgia Access requires an active Georgia health license specifically.</li>
+        <li><b>Your legal name as licensed.</b> If your CMS profile name doesn't match your license, your completion won't match up downstream. Middle initials count.</li>
+        <li><b>A personal email you'll keep</b> and your phone for multi-factor codes. Don't use a shared agency inbox — these accounts are tied to you individually.</li>
+        <li><b>Two to three uninterrupted hours</b> on a laptop. The training modules do not play reliably on phones, and progress can be lost on timeout.</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ============ FFM ============ -->
+  <section class="track" id="ffm" data-track="ffm">
+    <div class="track-head">
+      <span class="track-tag">Track 1</span>
+      <div>
+        <h2>FFM Registration &amp; MLMS Training</h2>
+        <p>Runs entirely inside the CMS Enterprise Portal. You'll request access to an application, fill out a profile, take the training, sign two agreements, and print a certificate. Every step happens at <strong>portal.cms.gov</strong>.</p>
+      </div>
+    </div>
+
+    <ol class="steps">
+
+      <li class="step" data-id="ffm-1">
+        <div class="num"><span>1</span></div>
+        <div class="card"><div class="card-body">
+          <h3>Create or sign in to your CMS Enterprise Portal account</h3>
+          <p class="where"><a href="https://portal.cms.gov/myportal" target="_blank" rel="noopener">portal.cms.gov/myportal</a></p>
+          <p class="say">If you certified in a prior plan year, you already have an account — use it. Creating a second account is the single most common way agents lose a week.</p>
+          <ol class="doit">
+            <li>Existing account: sign in with your user ID and password, then complete multi-factor authentication.</li>
+            <li>First time: choose <strong>New User Registration</strong> and select <strong>Agents/Brokers</strong> when asked for your user type.</li>
+            <li>Enter your legal name, date of birth, home address and SSN exactly as they appear on your license. CMS verifies your identity against credit-bureau records (this is called <strong>RIDP</strong>) — a nickname or an old address will fail it.</li>
+            <li>Set your user ID, password, security questions, and register a phone or email for MFA.</li>
+          </ol>
+          <div class="note"><span class="tag">Locked out</span><div>Forgot your user ID or password, or failed identity proofing? Don't start over with a new account. Call the CMS Enterprise Portal help desk and have them unlock the one you have — see the help desk list at the bottom of this page.</div></div>
+        </div>
+        <button class="mark" type="button"><span class="box"></span><span class="lbl-todo">Mark step complete</span><span class="lbl-done">Done</span></button></div>
+      </li>
+
+      <li class="step" data-id="ffm-2">
+        <div class="num"><span>2</span></div>
+        <div class="card"><div class="card-body">
+          <h3>Request access to the training application</h3>
+          <p class="where">My Portal → Add Application</p>
+          <p class="say">Your account by itself doesn't get you the training. You have to request a role on the FFM application — this is the step people skip.</p>
+          <ol class="doit">
+            <li>From <strong>My Portal</strong>, click <kbd>+ Add Application</kbd> in the top right.</li>
+            <li>Select the application: <strong>Federally Facilitated Marketplace (FFM)/Request for MLMS Training Access</strong>.</li>
+            <li>Select the role: <strong>Agent Broker Training Access</strong>.</li>
+            <li>For <em>Reason for Request</em>, type <kbd>CMS Training</kbd>. Anything short and factual is fine.</li>
+            <li>Click <kbd>Submit</kbd>. You'll get a confirmation on screen and by email.</li>
+          </ol>
+          <figure>
+            <button class="shot" type="button"><img src="img/5.webp" alt="The CMS Request Application Access wizard, with the FFM/Request for MLMS Training Access application selected in step 1, the Agent Broker Training Access role in step 2, and CMS Training typed into the Reason for Request box in step 3." loading="lazy"></button>
+            <figcaption>All three steps of the request, filled in and ready to submit.</figcaption>
+          </figure>
+          <div class="note tip"><span class="tag">Then what</span><div>Approval is usually quick but is not always instant. You can check the status any time under <strong>My Access</strong>. Once it's approved, the tile in the next step appears on your portal home page.</div></div>
+        </div>
+        <button class="mark" type="button"><span class="box"></span><span class="lbl-todo">Mark step complete</span><span class="lbl-done">Done</span></button></div>
+      </li>
+
+      <li class="step" data-id="ffm-3">
+        <div class="num"><span>3</span></div>
+        <div class="card"><div class="card-body">
+          <h3>Open the Marketplace Training tile and launch MLMS</h3>
+          <p class="where">My Portal → Marketplace Training – Agent Broker → MLMS Training</p>
+          <p class="say">Once your role is approved, a new tile shows up on your portal home page. Click the tile to expand it, then click the first link inside.</p>
+          <ol class="doit">
+            <li>On <strong>My Portal</strong>, find the <strong>Marketplace Training – Agent Broker</strong> tile and click it.</li>
+            <li>A dark panel slides open under the tile with three links. Click the first one: <strong>MLMS Training</strong>.</li>
+            <li>That hands you off to the Marketplace Learning Management System, which is a separate site (it runs on Cornerstone). Let it load fully.</li>
+          </ol>
+          <figure>
+            <button class="shot" type="button"><img src="img/1.webp" alt="The My Portal page showing the Marketplace Training – Agent Broker tile with a stethoscope icon, highlighted with a black outline." loading="lazy"></button>
+            <figcaption>The tile on My Portal. Click it — don't look for a menu.</figcaption>
+          </figure>
+          <figure>
+            <button class="shot" type="button"><img src="img/2.webp" alt="The expanded tile panel showing three links: MLMS Training highlighted in orange, Agent/Broker Helpdesk, and Registration Status Tracker." loading="lazy"></button>
+            <figcaption>The panel that opens. <strong>MLMS Training</strong> is the one you want.</figcaption>
+          </figure>
+          <div class="note tip"><span class="tag">Bookmark</span><div>The other two links are worth knowing. <strong>Registration Status Tracker</strong> is the searchable database you'll use in step 8 to confirm you're registered. <strong>Agent/Broker Helpdesk</strong> covers registration, training, Help On Demand and Find Local Help questions.</div></div>
+        </div>
+        <button class="mark" type="button"><span class="box"></span><span class="lbl-todo">Mark step complete</span><span class="lbl-done">Done</span></button></div>
+      </li>
+
+      <li class="step" data-id="ffm-4">
+        <div class="num"><span>4</span></div>
+        <div class="card"><div class="card-body">
+          <h3>Complete your MLMS profile and save it</h3>
+          <p class="where">MLMS → Complete Agent Broker Training Profile</p>
+          <p class="say">The first time you land in MLMS each plan year it makes you confirm your profile. This is where your NPN gets attached to your training record, so slow down here.</p>
+          <ol class="doit">
+            <li>Check that your <strong>name matches your insurance license exactly</strong>. This is the field that has to line up for your completion to be credited.</li>
+            <li>Enter your <strong>NPN</strong> and your business contact information.</li>
+            <li><strong>Race &amp; Ethnicity</strong> is optional. CMS uses it to understand agent participation; answer or skip it, either is fine.</li>
+            <li>Under <strong>Agency Affiliation</strong>, answer the <em>Agency Owner</em> question. Select <strong>No</strong> unless you are the owner, principal, or the one authorized representative registering on behalf of the agency. Only one person per agency should answer Yes.</li>
+            <li>If you answered Yes, expand <strong>Business Entity Profile</strong> and fill it in. If you answered No, leave both Business Entity Profile and Web-Based Entity Profile collapsed.</li>
+            <li>Scroll to the bottom and click <kbd>Save</kbd>. Nothing is stored until you do.</li>
+          </ol>
+          <figure>
+            <button class="shot" type="button"><img src="img/3.webp" alt="The MLMS profile page showing the Race and Ethnicity section with White and No selected, the Agency Affiliation section with Agency Owner set to No, collapsed Business Entity Profile and Web-Based Entity Profile sections, and the Save button highlighted at the bottom." loading="lazy"></button>
+            <figcaption>The bottom half of the profile. The <strong>Save</strong> button is easy to miss below the collapsed sections.</figcaption>
+          </figure>
+          <div class="note"><span class="tag">Watch out</span><div>If two people at the same agency both answer <strong>Yes</strong> to Agency Owner, the agency record gets tangled and takes a help desk ticket to unwind. Check with the office before answering Yes.</div></div>
+        </div>
+        <button class="mark" type="button"><span class="box"></span><span class="lbl-todo">Mark step complete</span><span class="lbl-done">Done</span></button></div>
+      </li>
+
+      <li class="step" data-id="ffm-5">
+        <div class="num"><span>5</span></div>
+        <div class="card"><div class="card-body">
+          <h3>Register for the right PY2027 curriculum</h3>
+          <p class="where">MLMS home → Register from Training Options</p>
+          <p class="say">MLMS shows you several courses. Picking the wrong one means sitting through training that doesn't count for what you write.</p>
+          <ol class="doit">
+            <li>On the MLMS home page, use <strong>Select Training → Register from Training Options</strong>.</li>
+            <li>Choose <strong>PY2027 AB Marketplace Training – Individual Marketplace</strong>. Take the <strong>Returning Agents and Brokers</strong> version if you completed FFM training for a prior plan year; take the <strong>New Agents and Brokers</strong> version if this is your first year. Returning is substantially shorter.</li>
+            <li>Ignore <strong>Small Business Health Options (SHOP)</strong> unless you actually write group business. It's a separate, optional curriculum.</li>
+            <li>A Spanish-language version of the same course is listed too — register for one or the other, not both.</li>
+            <li>Once registered, the course drops into <strong>Your Transcript</strong> at the bottom of the page.</li>
+          </ol>
+          <figure>
+            <button class="shot" type="button"><img src="img/4.webp" alt="The MLMS home page showing Get Started with Training with three numbered options, a Training Options panel listing the SHOP course, and Your Transcript listing the PY2027 Individual Marketplace course for Returning Agents and Brokers with an Open Curriculum link highlighted in orange." loading="lazy"></button>
+            <figcaption>MLMS home. Register on the left, then find the course under <strong>Your Transcript</strong>.</figcaption>
+          </figure>
+          <div class="note tip"><span class="tag">Prior year</span><div>Old plan-year courses stay on your transcript marked <strong>Inactive</strong> with a past due date. That's normal — they're history, not something to finish.</div></div>
+        </div>
+        <button class="mark" type="button"><span class="box"></span><span class="lbl-todo">Mark step complete</span><span class="lbl-done">Done</span></button></div>
+      </li>
+
+      <li class="step" data-id="ffm-6">
+        <div class="num"><span>6</span></div>
+        <div class="card"><div class="card-body">
+          <h3>Work through the curriculum and pass the exam</h3>
+          <p class="where">Your Transcript → Open Curriculum</p>
+          <p class="say">This is the long part. Budget real time and do it on a laptop in one or two sittings.</p>
+          <ol class="doit">
+            <li>Click <kbd>Open Curriculum</kbd> next to the PY2027 course on your transcript.</li>
+            <li>Complete each module in order. A module only counts when you reach its final screen — closing the window early loses that module's progress.</li>
+            <li>Take the exam at the end. The required passing score is shown on the exam page; if you don't pass, you can retake it.</li>
+            <li>Come back to the curriculum page and confirm every item shows as complete before you move on.</li>
+          </ol>
+          <div class="note"><span class="tag">Don't lose it</span><div>MLMS times out on inactivity and the session does not always restore cleanly. Save your place by finishing the module you're in before you step away, rather than leaving it parked mid-module.</div></div>
+        </div>
+        <button class="mark" type="button"><span class="box"></span><span class="lbl-todo">Mark step complete</span><span class="lbl-done">Done</span></button></div>
+      </li>
+
+      <li class="step" data-id="ffm-7">
+        <div class="num"><span>7</span></div>
+        <div class="card"><div class="card-body">
+          <h3>Sign the agreements</h3>
+          <p class="where">MLMS → Agreements</p>
+          <p class="say">Finishing the training does not register you. Signing the agreements does. Agents miss this every single year and then can't figure out why they don't show as registered.</p>
+          <ol class="doit">
+            <li>After the curriculum is complete, go to the <strong>Agreements</strong> section in MLMS.</li>
+            <li>Read and electronically sign the <strong>Privacy and Security Agreement</strong>.</li>
+            <li>Read and electronically sign the <strong>General Agreement</strong> for the Individual Marketplace.</li>
+            <li>Confirm both show a signature date before you leave the page.</li>
+          </ol>
+          <div class="note"><span class="tag">This is the one</span><div>Training complete + agreements signed = FFM registered. Training complete on its own = not registered, and your NPN won't appear on the completion list.</div></div>
+        </div>
+        <button class="mark" type="button"><span class="box"></span><span class="lbl-todo">Mark step complete</span><span class="lbl-done">Done</span></button></div>
+      </li>
+
+      <li class="step" data-id="ffm-8">
+        <div class="num"><span>8</span></div>
+        <div class="card"><div class="card-body">
+          <h3>Print your certificate and verify your status</h3>
+          <p class="where">MLMS → View Completed Transcript · then the Registration Status Tracker</p>
+          <p class="say">Two pieces of proof: your own certificate, and CMS's public record that you're registered.</p>
+          <ol class="doit">
+            <li>From MLMS home, click <kbd>View Completed Transcript</kbd> and download your <strong>certificate as a PDF</strong>. Save it somewhere you'll find it again.</li>
+            <li>Go back to the <strong>Marketplace Training – Agent Broker</strong> tile on My Portal and open the <strong>Registration Status Tracker</strong>.</li>
+            <li>Search your <strong>NPN</strong> and confirm it shows you as registered for the current plan year.</li>
+            <li>Send the certificate PDF and your NPN to the office so we can complete your carrier appointments.</li>
+          </ol>
+          <div class="note tip"><span class="tag">Lag time</span><div>The tracker can take a few days to reflect a brand-new completion. If the certificate downloaded and both agreements are signed, you're done — just check the tracker again later in the week.</div></div>
+        </div>
+        <button class="mark" type="button"><span class="box"></span><span class="lbl-todo">Mark step complete</span><span class="lbl-done">Done</span></button></div>
+      </li>
+
+    </ol>
+  </section>
+
+  <!-- ============ GEORGIA ============ -->
+  <section class="track" id="georgia" data-track="ga">
+    <div class="track-head">
+      <span class="track-tag">Track 2</span>
+      <div>
+        <h2>Georgia Access Certification</h2>
+        <p>Georgia left HealthCare.gov and runs its own state-based marketplace, so FFM registration does not cover Georgia business. This is a separate site with a separate login: <strong>certification.georgiaaccess.gov</strong>. It's shorter than the CMS track.</p>
+      </div>
+    </div>
+
+    <ol class="steps">
+
+      <li class="step" data-id="ga-1">
+        <div class="num"><span>1</span></div>
+        <div class="card"><div class="card-body">
+          <h3>Go to the Georgia Access certification site</h3>
+          <p class="where"><a href="https://certification.georgiaaccess.gov/" target="_blank" rel="noopener">certification.georgiaaccess.gov</a></p>
+          <p class="say">Open it in a fresh tab. Your CMS credentials have nothing to do with this site — don't try to reuse them.</p>
+          <ol class="doit">
+            <li>Load the site and click <kbd>Sign In</kbd> in the top navigation.</li>
+          </ol>
+        </div>
+        <button class="mark" type="button"><span class="box"></span><span class="lbl-todo">Mark step complete</span><span class="lbl-done">Done</span></button></div>
+      </li>
+
+      <li class="step" data-id="ga-2">
+        <div class="num"><span>2</span></div>
+        <div class="card"><div class="card-body">
+          <h3>Create an account, or log in if you have one</h3>
+          <p class="where">Sign In → Create Account</p>
+          <p class="say">If you certified with Georgia Access for a prior plan year, log in with that account. A duplicate account splits your training history.</p>
+          <ol class="doit">
+            <li>Returning: log in with the email and password you used last year. Use the password reset link rather than making a new account.</li>
+            <li>New: choose <strong>Create an account</strong> and register with your work email.</li>
+            <li>Verify your email address if prompted, then finish signing in.</li>
+          </ol>
+        </div>
+        <button class="mark" type="button"><span class="box"></span><span class="lbl-todo">Mark step complete</span><span class="lbl-done">Done</span></button></div>
+      </li>
+
+      <li class="step" data-id="ga-3">
+        <div class="num"><span>3</span></div>
+        <div class="card"><div class="card-body">
+          <h3>Fill in your agent profile</h3>
+          <p class="where">Profile / agent information</p>
+          <p class="say">Same rule as the CMS side: your name and NPN have to match your license, or your certification won't tie back to you.</p>
+          <ol class="doit">
+            <li>Enter your <strong>NPN</strong> and your <strong>Georgia health insurance license number</strong>.</li>
+            <li>Enter your legal name exactly as licensed, plus contact details.</li>
+            <li>Note your agency affiliation if the site asks for it.</li>
+            <li>Save the profile before moving on.</li>
+          </ol>
+          <div class="note"><span class="tag">Prerequisite</span><div>You need an <strong>active Georgia health line of authority</strong>. If you're not licensed in Georgia yet, get the license through NIPR first — the certification won't do you any good without it.</div></div>
+        </div>
+        <button class="mark" type="button"><span class="box"></span><span class="lbl-todo">Mark step complete</span><span class="lbl-done">Done</span></button></div>
+      </li>
+
+      <li class="step" data-id="ga-4">
+        <div class="num"><span>4</span></div>
+        <div class="card"><div class="card-body">
+          <h3>Launch the 2027 Agent Certification Training</h3>
+          <p class="where">Training catalog / dashboard</p>
+          <p class="say">Once you're logged in, the available courses show as cards on your dashboard. Pick the one that matches your history.</p>
+          <ol class="doit">
+            <li>Find <strong>2027 Returning Agent Certification Training</strong> if you were certified with Georgia Access for a prior plan year.</li>
+            <li>If this is your first year with Georgia Access, take the <strong>new agent</strong> version instead — it's longer and covers the platform basics.</li>
+            <li>Click the card to open the course and begin.</li>
+          </ol>
+          <figure>
+            <button class="shot" type="button"><img src="img/6.webp" alt="The Georgia Access course card, showing a teal-tinted photo of a smiling agent above the title 2027 Returning Agent Certification Training." loading="lazy"></button>
+            <figcaption>The course card on the Georgia Access dashboard.</figcaption>
+          </figure>
+        </div>
+        <button class="mark" type="button"><span class="box"></span><span class="lbl-todo">Mark step complete</span><span class="lbl-done">Done</span></button></div>
+      </li>
+
+      <li class="step" data-id="ga-5">
+        <div class="num"><span>5</span></div>
+        <div class="card"><div class="card-body">
+          <h3>Complete the modules and the assessment</h3>
+          <p class="where">Inside the course</p>
+          <p class="say">Shorter than the CMS training, but the same rules apply — finish modules rather than abandoning them halfway.</p>
+          <ol class="doit">
+            <li>Work through each module in sequence; the course tracks completion per module.</li>
+            <li>Take the assessment at the end and pass it.</li>
+            <li>Sign any <strong>agent agreements or attestations</strong> the course presents. As on the CMS side, these are what actually make the certification count.</li>
+            <li>Return to your dashboard and confirm the course reads as complete.</li>
+          </ol>
+        </div>
+        <button class="mark" type="button"><span class="box"></span><span class="lbl-todo">Mark step complete</span><span class="lbl-done">Done</span></button></div>
+      </li>
+
+      <li class="step" data-id="ga-6">
+        <div class="num"><span>6</span></div>
+        <div class="card"><div class="card-body">
+          <h3>Download your certificate and confirm you're certified</h3>
+          <p class="where">Dashboard → certificate / status</p>
+          <ol class="doit">
+            <li>Download the <strong>certificate of completion</strong> as a PDF and save it with your FFM certificate.</li>
+            <li>Check that your status on the dashboard reads as <strong>certified for PY2027</strong>, not just "training complete".</li>
+            <li>Send the certificate to the office along with your NPN.</li>
+          </ol>
+          <div class="note tip"><span class="tag">Last step</span><div>Certification is what lets you be listed and paid on Georgia Access business. Don't stop at the training completion screen.</div></div>
+        </div>
+        <button class="mark" type="button"><span class="box"></span><span class="lbl-todo">Mark step complete</span><span class="lbl-done">Done</span></button></div>
+      </li>
+
+    </ol>
+
+    <div class="finish">
+      <h3>When both tracks are done</h3>
+      <p>Send the office two PDFs — your CMS/MLMS certificate and your Georgia Access certificate — along with your NPN. We'll confirm your NPN on the CMS completion list and get your carrier appointments moving. Keep both PDFs yourself too; carriers ask for them during appointment and again at audit.</p>
+    </div>
+  </section>
+
+  <!-- ============ REFERENCE ============ -->
+  <section class="ref" id="help">
+    <h2>When something goes wrong</h2>
+    <p class="sub">Almost every problem on these two tracks is one of the following.</p>
+
+    <div class="qa">
+      <details>
+        <summary>I finished the training but I'm not showing as registered</summary>
+        <div class="ans"><p>You almost certainly didn't sign the agreements. Go back into MLMS and check that both the <strong>Privacy and Security Agreement</strong> and the <strong>General Agreement</strong> show a signature date. Training completion alone does not register you with the FFM.</p></div>
+      </details>
+      <details>
+        <summary>The Marketplace Training tile isn't on my portal home page</summary>
+        <div class="ans"><p>Your role request hasn't been approved, or was never submitted. Check <strong>My Access</strong> in the portal for a pending or missing request, and if there's nothing there, redo Track 1 step 2.</p></div>
+      </details>
+      <details>
+        <summary>Identity proofing (RIDP) failed when I registered</summary>
+        <div class="ans"><p>This is a credit-bureau match, not a CMS decision. It usually fails on a name or address that doesn't match your credit file — a maiden name, a recent move, or a missing middle initial. Don't create a second account. Call the CMS Enterprise Portal help desk; they can walk you through manual verification.</p></div>
+      </details>
+      <details>
+        <summary>Which training do I take — returning or new?</summary>
+        <div class="ans"><p>Returning if you completed that marketplace's training for a prior plan year, new if you didn't. The two systems are judged separately: you can be a returning agent on the CMS side and a new agent on Georgia Access, or the reverse. If you're unsure on the CMS side, look at your transcript — prior-year courses will be listed there.</p></div>
+      </details>
+      <details>
+        <summary>Do I need both certifications?</summary>
+        <div class="ans"><p>It depends on where you write. FFM registration covers the states that use HealthCare.gov. Georgia runs its own state-based marketplace, so Georgia business requires Georgia Access certification. If you write in both, you need both. If you're only writing one, you still need an active health license in every state you touch.</p></div>
+      </details>
+      <details>
+        <summary>A module froze, or I lost my progress</summary>
+        <div class="ans"><p>Close the course window, clear your browser cache, and reopen the curriculum from your transcript — completed modules should still be marked complete. Use a desktop browser, not a phone. If a module reopens at zero after you finished it, that's a help desk ticket, not something to redo blindly.</p></div>
+      </details>
+      <details>
+        <summary>Can I get CE credit for this?</summary>
+        <div class="ans"><p>Not through MLMS. CMS states plainly that its training is free but that <strong>no CEUs are available through the MLMS</strong>. If you need continuing education hours, you have to take an approved vendor course separately.</p></div>
+      </details>
+    </div>
+
+    <h2 style="margin-top:46px">Who to call</h2>
+    <p class="sub">Match the problem to the desk — the wrong desk will just route you and cost you a day.</p>
+
+    <div class="desks">
+      <div class="desk" style="--dcolor:var(--ffm-ink)">
+        <h4>Track 1 · Account</h4>
+        <div class="who">CMS Enterprise Portal Help Desk</div>
+        <div class="for">Can't log in, forgot user ID or password, MFA problems, failed identity proofing, locked account.</div>
+        <div class="contact">1-855-CMS-1515<br>(1-855-267-1515)</div>
+      </div>
+      <div class="desk" style="--dcolor:var(--ffm-ink)">
+        <h4>Track 1 · Training</h4>
+        <div class="who">MLMS Help Desk</div>
+        <div class="for">Printing certificates, launching training, taking exams, finding your curriculum, module progress, technical errors inside MLMS.</div>
+        <div class="contact"><a href="mailto:MLMSHelpDesk@cms.hhs.gov">MLMSHelpDesk@cms.hhs.gov</a></div>
+      </div>
+      <div class="desk" style="--dcolor:var(--ffm-ink)">
+        <h4>Track 1 · Registration</h4>
+        <div class="who">Agent/Broker Help Desk</div>
+        <div class="for">Anything about registration status, training requirements, Help On Demand, and Find Local Help.</div>
+        <div class="contact"><a href="mailto:FFMProducer-AssisterHelpDesk@cms.hhs.gov">FFMProducer-AssisterHelpDesk@cms.hhs.gov</a></div>
+      </div>
+      <div class="desk" style="--dcolor:var(--ga-ink)">
+        <h4>Track 2 · Georgia</h4>
+        <div class="who">Georgia Access Agent Support</div>
+        <div class="for">Account creation, course access, certification status, and anything else on certification.georgiaaccess.gov.</div>
+        <div class="contact"><a href="https://certification.georgiaaccess.gov/" target="_blank" rel="noopener">Support link on the site footer</a></div>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <p>Reflects the PY2027 portals as of September 2026. CMS and Georgia Access redesign these screens most plan years — if what you see doesn't match a screenshot here, trust the portal and tell the office so we can update this page.</p>
+    <button class="reset" type="button" id="reset">Reset my progress</button>
+  </footer>
+
+</main>
+
+<div id="lb" hidden><img id="lb-img" alt=""><div class="hint">Click anywhere or press Esc to close</div></div>
+
+<script>
+(function () {
+  var KEY = 'ccg-cert-py2027-v1';
+  var steps = Array.prototype.slice.call(document.querySelectorAll('.step'));
+  var state = {};
+
+  function load() {
+    try {
+      var raw = localStorage.getItem(KEY);
+      if (raw) state = JSON.parse(raw) || {};
+    } catch (e) { state = {}; }
+  }
+  function save() {
+    try { localStorage.setItem(KEY, JSON.stringify(state)); } catch (e) {}
+  }
+
+  var C = 2 * Math.PI * 9;
+  function meter(track, dialId, cntId) {
+    var group = steps.filter(function (s) {
+      return s.closest('[data-track]').getAttribute('data-track') === track;
+    });
+    var done = group.filter(function (s) { return state[s.getAttribute('data-id')]; }).length;
+    var dial = document.getElementById(dialId);
+    dial.setAttribute('stroke-dasharray', C.toFixed(1));
+    dial.setAttribute('stroke-dashoffset', (C - C * (done / group.length)).toFixed(1));
+    document.getElementById(cntId).textContent = done + '/' + group.length;
+    dial.closest('.meter').classList.toggle('full', done === group.length);
+  }
+
+  function render() {
+    steps.forEach(function (s) {
+      var on = !!state[s.getAttribute('data-id')];
+      s.classList.toggle('done', on);
+      var btn = s.querySelector('.mark');
+      btn.setAttribute('aria-pressed', on ? 'true' : 'false');
+    });
+    meter('ffm', 'dial-ffm', 'cnt-ffm');
+    meter('ga', 'dial-ga', 'cnt-ga');
+  }
+
+  steps.forEach(function (s) {
+    var btn = s.querySelector('.mark');
+    btn.addEventListener('click', function () {
+      var id = s.getAttribute('data-id');
+      if (state[id]) { delete state[id]; } else { state[id] = 1; }
+      save(); render();
+    });
+  });
+
+  document.getElementById('reset').addEventListener('click', function () {
+    state = {}; save(); render();
+  });
+
+  /* lightbox */
+  var lb = document.getElementById('lb'), lbImg = document.getElementById('lb-img');
+  document.querySelectorAll('.shot').forEach(function (b) {
+    b.addEventListener('click', function () {
+      var img = b.querySelector('img');
+      lbImg.src = img.src; lbImg.alt = img.alt; lb.hidden = false;
+    });
+  });
+  lb.addEventListener('click', function () { lb.hidden = true; lbImg.src = ''; });
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape' && !lb.hidden) { lb.hidden = true; lbImg.src = ''; }
+  });
+
+  load(); render();
+})();
+</script>
+
+<script>
+(function () {
+  var CODE = 'OE2026';
+  var KEY  = 'ccg-cert-unlocked-v1';
+  var gate = document.getElementById('gate');
+  var card = document.getElementById('gate-card');
+  var form = document.getElementById('gate-form');
+  var input = document.getElementById('code');
+  var err  = document.getElementById('gate-err');
+  var bar  = document.querySelector('.bar');
+  var main = document.querySelector('main');
+
+  function unlock(remember) {
+    gate.hidden = true;
+    bar.hidden = false;
+    main.hidden = false;
+    if (remember) { try { localStorage.setItem(KEY, '1'); } catch (e) {} }
+  }
+
+  try { if (localStorage.getItem(KEY) === '1') { unlock(false); return; } } catch (e) {}
+
+  input.focus();
+  form.addEventListener('submit', function (e) {
+    e.preventDefault();
+    var tries = (input.value || '').trim().toUpperCase();
+    if (tries === CODE) { unlock(true); return; }
+    err.hidden = false;
+    card.classList.remove('bad');
+    void card.offsetWidth;
+    card.classList.add('bad');
+    input.select();
+  });
+  input.addEventListener('input', function () { err.hidden = true; });
+})();
+</script>
