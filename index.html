@@ -886,15 +886,21 @@ footer p{max-width:62ch}
   try { if (localStorage.getItem(KEY) === '1') { unlock(false); return; } } catch (e) {}
 
   input.focus();
-  form.addEventListener('submit', function (e) {
-    e.preventDefault();
-    var tries = (input.value || '').trim().toUpperCase();
-    if (tries === CODE) { unlock(true); return; }
+
+  function attempt() {
+    var tried = (input.value || '').trim().toUpperCase();
+    if (tried === CODE) { unlock(true); return; }
     err.hidden = false;
     card.classList.remove('bad');
     void card.offsetWidth;
     card.classList.add('bad');
     input.select();
+  }
+
+  form.addEventListener('submit', function (e) { e.preventDefault(); attempt(); });
+  // Fallback: some browsers don't implicit-submit a single-input form on Enter.
+  input.addEventListener('keydown', function (e) {
+    if (e.key === 'Enter') { e.preventDefault(); attempt(); }
   });
   input.addEventListener('input', function () { err.hidden = true; });
 })();
